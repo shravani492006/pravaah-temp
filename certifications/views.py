@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Certification
-from trainers.models import Trainer
+from pravaah.pravaah.trainers.models import Trainer
 from django.contrib.auth.decorators import login_required
 from .forms import CertificationForm
 

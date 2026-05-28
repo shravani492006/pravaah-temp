@@ -1,6 +1,6 @@
 from django import forms
 from .models import Skill, TrainerSkill
-from trainers.models import Trainer
+from pravaah.pravaah.trainers.models import Trainer
 
 
 class SkillForm(forms.ModelForm):

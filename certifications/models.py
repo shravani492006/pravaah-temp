@@ -1,5 +1,5 @@
 from django.db import models
-from trainers.models import Trainer
+from pravaah.pravaah.trainers.models import Trainer
 
 
 class Certification(models.Model):

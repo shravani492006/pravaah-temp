@@ -23,7 +23,7 @@ django.setup()
 from django.contrib.auth.models import User, Group, Permission
 from django.utils.crypto import get_random_string
 from django.contrib.contenttypes.models import ContentType
-from trainers.models import Trainer
+from pravaah.pravaah.trainers.models import Trainer
 
 
 def main(email):

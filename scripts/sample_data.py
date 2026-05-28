@@ -10,9 +10,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pravaah.settings')
 import django
 django.setup()
 
-from trainers.models import Trainer
-from skills.models import Skill, TrainerSkill
-from certifications.models import Certification
+from pravaah.pravaah.trainers.models import Trainer
+from pravaah.pravaah.skills.models import Skill, TrainerSkill
+from pravaah.pravaah.certifications.models import Certification
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

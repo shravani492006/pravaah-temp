@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Skill, TrainerSkill
-from trainers.models import Trainer
+from pravaah.pravaah.trainers.models import Trainer
 from django.contrib.auth.decorators import login_required
 from .forms import SkillForm, AssignSkillForm
 

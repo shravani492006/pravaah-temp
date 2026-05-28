@@ -18,12 +18,20 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
 
-    'accounts',
-    'dashboard',
-    'trainers',
-    'skills',
-    'certifications',
-    'reports',
+    'pravaah.pravaah.accounts',
+    'pravaah.pravaah.dashboard',
+    'pravaah.pravaah.trainers',
+    'pravaah.pravaah.skills',
+    'pravaah.pravaah.certifications',
+    'pravaah.pravaah.reports',
+    'pravaah.pravaah.available',
+    'pravaah.pravaah.batch',
+    'pravaah.pravaah.assessment',
+    'pravaah.availability',
+    'pravaah.sessions',
+    'pravaah.structure',
+    'pravaah.marks',
+    'pravaah.feedback',
 ]
 
 MIDDLEWARE = [
@@ -32,7 +40,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'accounts.middleware.MustChangePasswordMiddleware',
+    'pravaah.pravaah.accounts.middleware.MustChangePasswordMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -50,7 +58,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'accounts.context_processors.role_flags',
+                'pravaah.pravaah.accounts.context_processors.role_flags',
             ],
         },
     },
@@ -60,8 +68,12 @@ WSGI_APPLICATION = 'pravaah.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pravaah',
+        'USER': 'root',
+        'PASSWORD': 'shravani@04',     
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

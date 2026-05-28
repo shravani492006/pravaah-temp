@@ -56,7 +56,7 @@ def trainer_list(request):
     querystring = params.urlencode()
 
     # skill options
-    from skills.models import Skill
+    from pravaah.pravaah.skills.models import Skill
     skills = Skill.objects.all()
 
     context = {
@@ -229,7 +229,7 @@ def approve_trainer(request, pk):
     # set explicit permissions for Trainer group: allow viewing trainers/skills/certifications and limited change_trainer
     perms_to_add = []
     try:
-        from trainers.models import Trainer as TrainerModel
+        from pravaah.pravaah.trainers.models import Trainer as TrainerModel
         ct_tr = ContentType.objects.get_for_model(TrainerModel)
         for codename in ['view_trainer', 'change_trainer']:
             try:
@@ -240,7 +240,7 @@ def approve_trainer(request, pk):
         pass
 
     try:
-        from skills.models import Skill as SkillModel
+        from pravaah.pravaah.skills.models import Skill as SkillModel
         ct_skill = ContentType.objects.get_for_model(SkillModel)
         try:
             perms_to_add.append(Permission.objects.get(codename='view_skill', content_type=ct_skill))
@@ -250,7 +250,7 @@ def approve_trainer(request, pk):
         pass
 
     try:
-        from certifications.models import Certification as CertificationModel
+        from pravaah.pravaah.certifications.models import Certification as CertificationModel
         ct_cert = ContentType.objects.get_for_model(CertificationModel)
         try:
             perms_to_add.append(Permission.objects.get(codename='view_certification', content_type=ct_cert))

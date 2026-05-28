@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from trainers.models import Trainer
-from skills.models import TrainerSkill, Skill
-from certifications.models import Certification
+from pravaah.pravaah.trainers.models import Trainer
+from pravaah.pravaah.skills.models import TrainerSkill, Skill
+from pravaah.pravaah.certifications.models import Certification
 from django.http import HttpResponse
 import csv
 from django.utils import timezone
