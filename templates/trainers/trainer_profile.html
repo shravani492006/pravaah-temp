@@ -6,31 +6,32 @@
   {% else %}
   <div class="row">
     <div class="col-md-4">
-      <div class="card p-3 text-center">
+      <div class="position-sticky" style="top:80px;">
+      <div class="card p-3 text-center mb-3">
         {% if trainer.profile_photo %}
-        <img src="{{ trainer.profile_photo.url }}" class="img-fluid rounded mb-3" style="max-height:240px;">
+        <img src="{{ trainer.profile_photo.url }}" class="img-fluid rounded mb-3" style="max-height:220px;">
         {% else %}
         <div class="border p-4 mb-3">No photo</div>
         {% endif %}
-        <h4>{{ trainer.first_name }} {{ trainer.last_name }}</h4>
-        <p class="mb-1"><strong>Code:</strong> {{ trainer.trainer_code }}</p>
-        <p class="mb-1"><strong>Availability:</strong> <span class="badge bg-info text-dark">{{ trainer.availability }}</span></p>
-        <p class="mb-1"><strong>Status:</strong> {% if trainer.status == 'Active' %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">{{ trainer.status }}</span>{% endif %}</p>
-        <p class="mb-1"><strong>Joining:</strong> {{ trainer.joining_date }}</p>
+        <h4 class="h5 mb-1">{{ trainer.first_name }} {{ trainer.last_name }}</h4>
+        <p class="mb-1 small"><strong>Code:</strong> {{ trainer.trainer_code }}</p>
+        <p class="mb-1 small"><i class="bi bi-calendar-check-fill text-muted me-1"></i><strong>Availability:</strong> <span class="badge bg-info text-dark">{{ trainer.availability }}</span></p>
+        <p class="mb-1 small"><i class="bi bi-person-badge me-1 text-muted"></i><strong>Status:</strong> {% if trainer.status == 'Active' %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">{{ trainer.status }}</span>{% endif %}</p>
+        <p class="mb-0 small"><strong>Joining:</strong> {{ trainer.joining_date }}</p>
       </div>
 
-      <div class="card mt-3 p-3">
-        <h5>Skills</h5>
-        {% if skills_qs %}
-          {% for ts in skills_qs %}
-            <div class="mb-2">
-              <span class="badge bg-primary">{{ ts.skill.skill_name }}</span>
-              {% if ts.proficiency_level %}<small class="text-muted"> - {{ ts.proficiency_level }}</small>{% endif %}
-            </div>
-          {% endfor %}
-        {% else %}
-          <p class="text-muted">No skills assigned.</p>
-        {% endif %}
+      <div class="card mb-3">
+        <div class="card-body py-3">
+          <h6 class="mb-2">Skills</h6>
+          {% if skills_qs %}
+            {% for ts in skills_qs %}
+              <span class="badge bg-primary me-1 mb-1">{{ ts.skill.skill_name }}{% if ts.proficiency_level %} <small class="text-light">{{ ts.proficiency_level }}</small>{% endif %}</span>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted mb-0 small">No skills assigned.</p>
+          {% endif %}
+        </div>
+      </div>
       </div>
     </div>
 
@@ -84,7 +85,7 @@
 
       <!-- NEW: Batch assignments -->
       <div class="card mt-3 mb-4">
-        <div class="card-header bg-white border-0 py-2"><h5 class="mb-0">Assigned Batches</h5></div>
+        <div class="card-header bg-white border-0 py-2"><h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Assigned Batches</h5></div>
         <div class="card-body">
         {% if batches %}
           <ul class="list-group list-group-flush">
@@ -96,7 +97,17 @@
                   <div class="text-muted small">{{ b.start_date }} to {{ b.end_date }} • {{ b.student_count }} students</div>
                 </div>
                 <div class="text-end">
-                  <span class="badge bg-secondary text-capitalize mb-2">{{ b.status }}</span>
+                  {% if b.status == 'accepted' %}
+                    <span class="badge bg-success text-capitalize mb-2">Accepted</span>
+                  {% elif b.status == 'pending' %}
+                    <span class="badge bg-warning text-dark text-capitalize mb-2">Pending</span>
+                  {% elif b.status == 'rejected' %}
+                    <span class="badge bg-danger text-capitalize mb-2">Rejected</span>
+                  {% elif b.status == 'completed' %}
+                    <span class="badge bg-secondary text-capitalize mb-2">Completed</span>
+                  {% else %}
+                    <span class="badge bg-secondary text-capitalize mb-2">{{ b.status }}</span>
+                  {% endif %}
                   <div><a class="btn btn-sm btn-outline-primary" href="{% url 'batch:detail' b.pk %}">View</a></div>
                 </div>
               </li>
@@ -110,7 +121,7 @@
 
       <!-- NEW: Assessments -->
       <div class="card mt-3 mb-4">
-        <div class="card-header bg-white border-0 py-2"><h5 class="mb-0">Assessments</h5></div>
+        <div class="card-header bg-white border-0 py-2"><h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Assessments</h5></div>
         <div class="card-body">
         {% if assessments %}
           <div class="table-responsive">
@@ -118,20 +129,62 @@
             <thead><tr><th>Name</th><th>Type</th><th>Due</th><th>Batch</th></tr></thead>
             <tbody>
               {% for a in assessments %}
+                {% if forloop.counter <= 3 %}
                 <tr>
                   <td>{{ a.assessment_name }}</td>
                   <td>{{ a.assessment_type }}</td>
                   <td>{{ a.due_date }}</td>
                   <td>{% if a.batch %}<a href="{% url 'batch:detail' a.batch.pk %}">{{ a.batch.batch_name }}</a>{% else %}-{% endif %}</td>
                 </tr>
+                {% else %}
+                <tr class="collapse" id="assess-row-{{ forloop.counter }}">
+                  <td>{{ a.assessment_name }}</td>
+                  <td>{{ a.assessment_type }}</td>
+                  <td>{{ a.due_date }}</td>
+                  <td>{% if a.batch %}<a href="{% url 'batch:detail' a.batch.pk %}">{{ a.batch.batch_name }}</a>{% else %}-{% endif %}</td>
+                </tr>
+                {% endif %}
               {% endfor %}
             </tbody>
           </table>
           </div>
+          {% if assessments|length > 3 %}
+            <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="tbody .collapse" aria-expanded="false" aria-controls="assess-row">Show more</button>
+          {% endif %}
           <a class="btn btn-sm btn-outline-primary" href="{% url 'assessment:assessment_list' %}">View all assessments</a>
         {% else %}
           <p class="text-muted mb-0">No assessments scheduled.</p>
         {% endif %}
+        </div>
+      </div>
+
+      <!-- NEW: Availability Entries -->
+      <div class="card mt-3 mb-4">
+        <div class="card-header bg-white border-0 py-2"><h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Availability Entries</h5></div>
+        <div class="card-body">
+          {% if availability_entries %}
+            <ul class="list-group list-group-flush">
+              {% for av in availability_entries %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong class="d-block">{{ av.date }}</strong>
+                    <small class="text-muted">{{ av.note }}</small>
+                  </div>
+                  <div>
+                    {% if av.status == 'available' %}
+                      <span class="badge bg-success">Available</span>
+                    {% elif av.status == 'leave' %}
+                      <span class="badge bg-danger">Leave</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ av.status }}</span>
+                    {% endif %}
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">No availability records</p>
+          {% endif %}
         </div>
       </div>
 
