@@ -1,0 +1,11 @@
+{
+  "name": "pravaah-qa",
+  "private": true,
+  "devDependencies": {
+    "playwright": "^1.40.0",
+    "axe-core": "^4.8.2"
+  },
+  "scripts": {
+    "a11y": "node tests/run_a11y.js"
+  }
+}
