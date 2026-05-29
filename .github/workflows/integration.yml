@@ -1,0 +1,58 @@
+name: Trainer integration
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpass
+          MYSQL_DATABASE: pravaah
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_ENGINE: django.db.backends.mysql
+      DB_NAME: pravaah
+      DB_USER: root
+      DB_PASSWORD: rootpass
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DJANGO_SETTINGS_MODULE: pravaah.settings
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -prootpass >/dev/null 2>&1 && break || sleep 2
+          done
+
+      - name: Run migrations
+        run: |
+          python manage.py migrate --noinput
+
+      - name: Run trainer integration command
+        run: |
+          python manage.py run_trainer_integration_test
