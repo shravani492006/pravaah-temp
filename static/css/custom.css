@@ -1,0 +1,37 @@
+/* Custom UI enhancements for trainer profile */
+:root{
+  --card-radius: .5rem;
+  --muted: #6c757d;
+}
+
+/* Cards */
+.card{ border-radius: var(--card-radius); box-shadow: 0 6px 18px rgba(0,0,0,0.04); }
+.card-header{ background-color: #fff; border-bottom: 0; }
+
+/* Headings */
+h5{ font-weight:600; letter-spacing: -0.2px; }
+.h5{ font-size:1rem; }
+
+/* Left sidebar sticky */
+.position-sticky{ position: sticky; top: 1rem; }
+
+/* Badges */
+.badge{ font-weight:600; }
+
+/* Batch list hover */
+.list-group-item:hover{ background: #fbfbfb; }
+
+/* Buttons */
+.btn-outline-primary{ border-radius: .35rem; }
+
+/* Small UI tweaks */
+.small{ font-size: .875rem; }
+
+/* Availability note */
+.av-note{ color: var(--muted); font-size: .9rem; }
+
+/* Responsive adjustments */
+@media (max-width: 767px){
+  .position-sticky{ position: static; }
+  .card img{ max-height: 160px; }
+}
