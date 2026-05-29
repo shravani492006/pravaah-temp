@@ -19,4 +19,6 @@ env/
 .vscode/
 
 # Static collected files
-staticfiles/
+staticfiles/pravaah_data.sql
+pravaah_data_ignore_duplicates.sql
+pravaah_server_backup.sql
