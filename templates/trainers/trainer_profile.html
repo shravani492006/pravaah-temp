@@ -78,6 +78,54 @@
         {% endif %}
       </div>
 
+      <!-- NEW: Batch assignments -->
+      <div class="card mt-3 p-3">
+        <h5>Assigned Batches</h5>
+        {% if batches %}
+          <ul class="list-group list-group-flush">
+            {% for b in batches %}
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <strong><a href="{% url 'batch:detail' b.pk %}">{{ b.batch_name }}</a></strong>
+                    {% if b.course_name %}<div class="text-muted">{{ b.course_name }}</div>{% endif %}
+                    <small class="text-muted">{{ b.start_date }} to {{ b.end_date }} • {{ b.student_count }} students</small>
+                  </div>
+                  <div>
+                    <span class="badge bg-secondary text-capitalize">{{ b.status }}</span>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">No batches assigned.</p>
+        {% endif %}
+      </div>
+
+      <!-- NEW: Assessments -->
+      <div class="card mt-3 p-3">
+        <h5>Assessments</h5>
+        {% if assessments %}
+          <table class="table table-sm">
+            <thead><tr><th>Name</th><th>Type</th><th>Due</th><th>Batch</th></tr></thead>
+            <tbody>
+              {% for a in assessments %}
+                <tr>
+                  <td>{{ a.assessment_name }}</td>
+                  <td>{{ a.assessment_type }}</td>
+                  <td>{{ a.due_date }}</td>
+                  <td>{% if a.batch %}<a href="{% url 'batch:detail' a.batch.pk %}">{{ a.batch.batch_name }}</a>{% else %}-{% endif %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'assessment:assessment_list' %}">View all assessments</a>
+        {% else %}
+          <p class="text-muted">No assessments scheduled.</p>
+        {% endif %}
+      </div>
+
     </div>
   </div>
   {% endif %}
