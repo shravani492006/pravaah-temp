@@ -20,13 +20,13 @@ def students_list(request):
     if getattr(settings, 'FORCE_USE_STUB_PARTICIPANTS', False):
         if batch_id == '2' or batch_id == 2:
             participants = [
-                {'id': 1, 'name': 'A', 'email': 'a@example.com', 'mobile': '111', 'batch_id': 2},
-                {'id': 2, 'name': 'B', 'email': 'b@example.com', 'mobile': '222', 'batch_id': 2},
+                {'id': 999001, 'name': 'A', 'email': 'a@example.com', 'mobile': '111', 'batch_id': 2},
+                {'id': 999002, 'name': 'B', 'email': 'b@example.com', 'mobile': '222', 'batch_id': 2},
             ]
         else:
             participants = [
-                {'id': 1, 'name': 'Rahul', 'email': 'r@example.com', 'mobile': '9999999999', 'batch_id': 1},
-                {'id': 2, 'name': 'Priya', 'email': 'p@example.com', 'mobile': '8888888888', 'batch_id': 1},
+                {'id': 999001, 'name': 'Rahul', 'email': 'r@example.com', 'mobile': '9999999999', 'batch_id': 1},
+                {'id': 999002, 'name': 'Priya', 'email': 'p@example.com', 'mobile': '8888888888', 'batch_id': 1},
             ]
     else:
         try:
@@ -96,13 +96,13 @@ def attendance(request, batch_id=None):
     if getattr(settings, 'FORCE_USE_STUB_PARTICIPANTS', False):
         if batch_id == '2' or batch_id == 2:
             participants = [
-                {'id': 1, 'name': 'A', 'email': 'a@example.com', 'mobile': '111', 'batch_id': 2},
-                {'id': 2, 'name': 'B', 'email': 'b@example.com', 'mobile': '222', 'batch_id': 2},
+                {'id': 999001, 'name': 'A', 'email': 'a@example.com', 'mobile': '111', 'batch_id': 2},
+                {'id': 999002, 'name': 'B', 'email': 'b@example.com', 'mobile': '222', 'batch_id': 2},
             ]
         else:
             participants = [
-                {'id': 1, 'name': 'Rahul', 'email': 'r@example.com', 'mobile': '9999999999', 'batch_id': 1},
-                {'id': 2, 'name': 'Priya', 'email': 'p@example.com', 'mobile': '8888888888', 'batch_id': 1},
+                {'id': 999001, 'name': 'Rahul', 'email': 'r@example.com', 'mobile': '9999999999', 'batch_id': 1},
+                {'id': 999002, 'name': 'Priya', 'email': 'p@example.com', 'mobile': '8888888888', 'batch_id': 1},
             ]
     else:
         try:
