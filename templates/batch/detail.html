@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Batch: {{ batch.batch_name }}</h5>
+      <div>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'trainers:attendance_history' batch.pk %}">Attendance History</a>
+      </div>
+    </div>
+    <div class="card-body">
+      <p><strong>Course:</strong> {{ batch.course_name }}</p>
+      <p><strong>Dates:</strong> {{ batch.start_date }} — {{ batch.end_date }}</p>
+      <p><strong>Students:</strong> {{ batch.student_count }}</p>
+
+      <hr />
+      <h6>Export Full Batch Attendance (date range)</h6>
+      <form method="get" action="{% url 'trainers:attendance_history' batch.pk %}">
+        <div class="row g-2">
+          <div class="col-md-4">
+            <label class="form-label">From</label>
+            <input type="date" name="date_from" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">To</label>
+            <input type="date" name="date_to" class="form-control" />
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <input type="hidden" name="export" value="csv" />
+            <button class="btn btn-sm btn-success" type="submit">Export CSV</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

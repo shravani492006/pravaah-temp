@@ -43,23 +43,60 @@ def attendance_history(request, batch_id):
     paginator = Paginator(sessions_list, 10)
     page_obj = paginator.get_page(page)
 
-    # if export csv for a selected session_date
-    if request.GET.get('export') == 'csv' and session_date_str:
-        sd = parse_date(session_date_str)
-        if sd:
-            rows = Attendance.objects.filter(batch_id=batch_id, session_date=sd).order_by('-marked_at')
-            # prepare CSV
+    # if export csv for a selected session_date or for a date range
+    if request.GET.get('export') == 'csv':
+        # export single session
+        if session_date_str:
+            sd = parse_date(session_date_str)
+            if sd:
+                rows = Attendance.objects.filter(batch_id=batch_id, session_date=sd).order_by('-marked_at')
+                # prepare CSV
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = f'attachment; filename="attendance_{batch_id}_{session_date_str}.csv"'
+                writer = csv.writer(response)
+                writer.writerow(['session_date','participant_id', 'participant_name', 'status', 'marked_at', 'marked_by'])
+                pids = [r.participant_id for r in rows]
+                participants_map = {}
+                if pids:
+                    qs_p = Participant.objects.filter(id__in=pids).values('id', 'name')
+                    participants_map = {p['id']: p['name'] for p in qs_p}
+                for r in rows:
+                    writer.writerow([r.session_date, r.participant_id, participants_map.get(r.participant_id, ''), r.status, r.marked_at, r.marked_by])
+                return response
+        # export date range (full batch attendance)
+        else:
+            # require at least one date filter
+            if not (date_from or date_to):
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = f'attachment; filename="attendance_{batch_id}_all.csv"'
+                writer = csv.writer(response)
+                writer.writerow(['session_date','participant_id', 'participant_name', 'status', 'marked_at', 'marked_by'])
+                return response
+
+            rows = Attendance.objects.filter(batch_id=batch_id)
+            if date_from:
+                df = parse_date(date_from)
+                if df:
+                    rows = rows.filter(session_date__gte=df)
+            if date_to:
+                dt = parse_date(date_to)
+                if dt:
+                    rows = rows.filter(session_date__lte=dt)
+            rows = rows.order_by('session_date', 'participant_id')
+
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = f'attachment; filename="attendance_{batch_id}_{session_date_str}.csv"'
+            fname_from = date_from or 'start'
+            fname_to = date_to or 'end'
+            response['Content-Disposition'] = f'attachment; filename="attendance_{batch_id}_{fname_from}_{fname_to}.csv"'
             writer = csv.writer(response)
-            writer.writerow(['participant_id', 'participant_name', 'status', 'marked_at', 'marked_by'])
-            pids = [r.participant_id for r in rows]
+            writer.writerow(['session_date','participant_id', 'participant_name', 'status', 'marked_at', 'marked_by'])
+            pids = list(rows.values_list('participant_id', flat=True))
             participants_map = {}
             if pids:
-                qs_p = Participant.objects.filter(id__in=pids).values('id', 'name')
+                qs_p = Participant.objects.filter(id__in=set(pids)).values('id', 'name')
                 participants_map = {p['id']: p['name'] for p in qs_p}
             for r in rows:
-                writer.writerow([r.participant_id, participants_map.get(r.participant_id, ''), r.status, r.marked_at, r.marked_by])
+                writer.writerow([r.session_date, r.participant_id, participants_map.get(r.participant_id, ''), r.status, r.marked_at, r.marked_by])
             return response
 
     session_rows = None
