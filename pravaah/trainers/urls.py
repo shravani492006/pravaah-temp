@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import students_views
 
 app_name = 'trainers'
 
@@ -8,6 +9,11 @@ urlpatterns = [
     path('add/', views.trainer_add, name='add'),
     path('profile/', views.trainer_profile, name='profile'),
     path('profile/edit/', views.trainer_profile_edit, name='profile_edit'),
+
+    # Students & Attendance
+    path('students/', students_views.students_list, name='students'),
+    path('students/attendance/<int:batch_id>/', students_views.attendance, name='attendance'),
+
     # Registration & approval workflow
     path('register/', views.trainer_register, name='register'),
     path('register/submitted/', views.registration_submitted, name='registration_submitted'),
