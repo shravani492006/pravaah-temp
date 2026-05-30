@@ -46,3 +46,15 @@ class AttendanceHistoryDBTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('A', resp.content.decode())
         self.assertIn('B', resp.content.decode())
+
+    def test_history_export_csv(self):
+        client = Client()
+        client.login(username='t2', password='pass')
+        url = reverse('trainers:attendance_history', args=[2]) + '?session_date=2026-05-20&export=csv'
+        resp = client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp['Content-Type'].startswith('text/csv'))
+        content = resp.content.decode()
+        self.assertIn('participant_id,participant_name,status,marked_at,marked_by', content)
+        self.assertIn('A', content)
+        self.assertIn('B', content)

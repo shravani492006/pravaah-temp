@@ -49,3 +49,16 @@ class AttendanceDBTest(TestCase):
         statuses = set(q.status for q in qs)
         self.assertIn('Present', statuses)
         self.assertIn('Absent', statuses)
+
+    def test_attendance_idempotent(self):
+        client = Client()
+        logged_in = client.login(username='t1', password='pass')
+        self.assertTrue(logged_in)
+        url = reverse('trainers:attendance', args=[1])
+        resp1 = client.post(url, {'present_1': 'on', 'present_2': 'on', 'session_date': '2026-06-01'}, follow=True)
+        self.assertEqual(resp1.status_code, 200)
+        resp2 = client.post(url, {'present_1': 'on', 'present_2': 'on', 'session_date': '2026-06-01'}, follow=True)
+        self.assertEqual(resp2.status_code, 200)
+        qs = Attendance.objects.filter(session_date=datetime.date(2026,6,1))
+        # should still be only two records
+        self.assertEqual(qs.count(), 2)

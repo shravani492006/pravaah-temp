@@ -72,11 +72,24 @@ def attendance(request, batch_id=None):
         all_ids = [p['id'] for p in participants]
         for pid in all_ids:
             try:
-                if pid in present_ids:
-                    Attendance.objects.create(participant_id=pid, batch_id=batch_id, session_date=session_date, status='Present', marked_by=request.user)
+                new_status = 'Present' if pid in present_ids else 'Absent'
+                obj, created = Attendance.objects.get_or_create(
+                    participant_id=pid,
+                    session_date=session_date,
+                    defaults={
+                        'batch_id': batch_id,
+                        'status': new_status,
+                        'marked_by': request.user,
+                    }
+                )
+                if not created:
+                    if obj.status != new_status:
+                        obj.status = new_status
+                        obj.marked_by = request.user
+                        obj.save()
+                if obj.status == 'Present':
                     saved_present += 1
                 else:
-                    Attendance.objects.create(participant_id=pid, batch_id=batch_id, session_date=session_date, status='Absent', marked_by=request.user)
                     saved_absent += 1
             except Exception:
                 continue

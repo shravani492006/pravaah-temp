@@ -19,19 +19,37 @@
           </a>
         {% endfor %}
       </div>
+      {% if page_obj.has_other_pages %}
+      <nav aria-label="Sessions pagination">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
     {% else %}
       <div class="alert alert-info">No attendance sessions recorded for this batch.</div>
     {% endif %}
 
     {% if session_rows %}
-      <h6>Session details for {{ selected_date }}</h6>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Session details for {{ selected_date }}</h6>
+        <div>
+          <a class="btn btn-sm btn-outline-secondary" href="?session_date={{ selected_date }}&export=csv">Export CSV</a>
+        </div>
+      </div>
       <div class="table-responsive">
         <table class="table table-sm">
           <thead><tr><th>Student</th><th>Status</th><th>Marked At</th><th>Marked By</th></tr></thead>
           <tbody>
             {% for r in session_rows %}
               <tr>
-                <td>{{ participants_map.r.participant_id|default:participants_map.r.participant_id }}</td>
+                <td>{{ participants_map|get_item:r.participant_id }}</td>
                 <td>{{ r.status }}</td>
                 <td>{{ r.marked_at }}</td>
                 <td>{{ r.marked_by }}</td>
@@ -43,3 +61,7 @@
     {% endif %}
   </div>
 </div>
+
+{% comment %}
+get_item filter is not built-in; define a simple template filter if not present. Fallback will show numeric id.
+{% endcomment %}

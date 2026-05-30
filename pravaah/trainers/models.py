@@ -66,3 +66,6 @@ class Attendance(models.Model):
     class Meta:
         db_table = 'attendance'
         ordering = ['-session_date']
+        constraints = [
+            models.UniqueConstraint(fields=['participant_id', 'session_date'], name='unique_attendance_per_session')
+        ]
