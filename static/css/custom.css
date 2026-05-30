@@ -60,3 +60,15 @@ h5{ font-weight:700; letter-spacing: -0.3px; }
   .sidebar{ display:none; }
   .card img{ max-height: 160px; }
 }
+
+/* Navbar and avatar */
+.navbar-brand .bi-lightning-charge-fill{ color: white; }
+.navbar .nav-link:focus, .navbar .nav-link:hover{ text-decoration: underline; }
+.avatar{ width:34px; height:34px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-weight:700; }
+.avatar.bg-white{ background:#fff; color:var(--brand-primary); }
+.notif-badge{ font-size:.65rem; padding:.25em .4em; }
+.navbar .dropdown-menu{ min-width:200px; }
+.navbar .dropdown-item i{ color: var(--brand-primary); }
+
+/* Focus outline for accessibility */
+.btn:focus, .nav-link:focus, .dropdown-item:focus{ outline:3px solid rgba(111,66,193,0.18); outline-offset:2px; }

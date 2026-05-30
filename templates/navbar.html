@@ -1,19 +1,49 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg,var(--brand-primary),var(--brand-secondary));">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="/">
-      <i class="bi bi-circle-fill text-warning me-2" style="font-size:10px"></i>
-      PRAVAAH
+    <a class="navbar-brand d-flex align-items-center" href="/" aria-label="PRAVAAH Home">
+      <div class="me-2 d-flex align-items-center justify-content-center" style="width:40px;height:40px;border-radius:9px;background:rgba(255,255,255,0.08)">
+        <i class="bi bi-lightning-charge-fill text-white" style="font-size:18px"></i>
+      </div>
+      <div class="d-none d-md-block">
+        <div class="fw-bold text-white">PRAVAAH</div>
+        <small class="text-white-50">Trainer Portal</small>
+      </div>
     </a>
 
-    <div class="d-flex ms-auto align-items-center">
-      {% if request.user.is_authenticated %}
-        <button id="sidebarToggle" class="btn btn-sm btn-outline-light me-2" title="Toggle sidebar"><i class="bi bi-list"></i></button>
-        <span class="text-light me-3">{{ request.user.username }}</span>
-        <a class="btn btn-sm btn-outline-light me-2" href="{% url 'accounts:password_change' %}"><i class="bi bi-key-fill"></i></a>
-        <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:logout' %}">Logout</a>
-      {% else %}
-        <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:login' %}">Login</a>
-      {% endif %}
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link text-white" href="/dashboard/">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{% url 'trainers:profile' %}">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{% url 'trainers:students' %}?batch_id=1">Students</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center ms-auto">
+        {% if request.user.is_authenticated %}
+          <a class="btn btn-sm btn-outline-light me-2 position-relative" href="#" role="button" aria-label="Notifications" data-bs-toggle="tooltip" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge">3</span>
+          </a>
+
+          <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="avatar bg-white text-primary me-2">{{ request.user.username|slice:":1"|upper }}</div>
+              <span class="d-none d-md-inline">{{ request.user.get_full_name|default:request.user.username }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+              <li><a class="dropdown-item" href="{% url 'trainers:profile' %}"><i class="bi bi-person-circle me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}"><i class="bi bi-key-fill me-2"></i>Change password</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        {% else %}
+          <a class="btn btn-sm btn-light" href="{% url 'accounts:login' %}">Sign in</a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </nav>
