@@ -1,0 +1,45 @@
+{% load static %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Attendance History for Batch {{ batch_id }}</h5>
+    <div>
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'trainers:students' %}?batch_id={{ batch_id }}">Back to Students</a>
+    </div>
+  </div>
+  <div class="card-body">
+    {% if sessions %}
+      <div class="list-group mb-3">
+        {% for s in sessions %}
+          <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="?session_date={{ s.session_date }}">
+            <div>
+              <strong>{{ s.session_date }}</strong>
+              <div class="small text-muted">Total: {{ s.total }} — Present: {{ s.present }} — Absent: {{ s.absent }}{% if s.late %} — Late: {{ s.late }}{% endif %}</div>
+            </div>
+            <div><span class="badge bg-secondary">View</span></div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info">No attendance sessions recorded for this batch.</div>
+    {% endif %}
+
+    {% if session_rows %}
+      <h6>Session details for {{ selected_date }}</h6>
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead><tr><th>Student</th><th>Status</th><th>Marked At</th><th>Marked By</th></tr></thead>
+          <tbody>
+            {% for r in session_rows %}
+              <tr>
+                <td>{{ participants_map.r.participant_id|default:participants_map.r.participant_id }}</td>
+                <td>{{ r.status }}</td>
+                <td>{{ r.marked_at }}</td>
+                <td>{{ r.marked_by }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+</div>
