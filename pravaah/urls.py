@@ -7,8 +7,12 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 
-    # Dashboard
-    path('', include('pravaah.dashboard.urls')),
+    # Root -> Login (make login the first page)
+    from django.views.generic import RedirectView
+    path('', RedirectView.as_view(url='/accounts/login/', permanent=False)),
+
+    # Dashboard (moved)
+    path('dashboard/', include('pravaah.dashboard.urls')),
 
     # Accounts
     path('accounts/', include('pravaah.accounts.urls')),
