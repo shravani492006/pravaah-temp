@@ -41,11 +41,35 @@
         var sb = document.getElementById('sidebar');
         var storageKey = 'pravaah.sidebar.collapsed';
 
-        // restore collapsed state from localStorage
+        // helper to get CSRF token from cookie
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+
+        // restore collapsed state: prefer server-side preference when available
         try {
-          var collapsed = localStorage.getItem(storageKey);
-          if(collapsed === 'true' && sb) sb.classList.add('collapsed');
-        } catch(e) { /* ignore storage errors */ }
+          if (sb) {
+            fetch('/accounts/prefs/sidebar/', {credentials: 'same-origin'})
+              .then(function(res){ if(!res.ok) throw new Error('no-pref'); return res.json() })
+              .then(function(data){
+                if(data && data.sidebar_collapsed){ sb.classList.add('collapsed'); try{ localStorage.setItem(storageKey, 'true'); }catch(e){} }
+              })
+              .catch(function(){
+                try { var collapsed = localStorage.getItem(storageKey); if(collapsed === 'true' && sb) sb.classList.add('collapsed'); } catch(e) {}
+              });
+          }
+        } catch(e) { /* ignore */ }
 
         if(toggle){
           // initialize aria-pressed
@@ -55,10 +79,24 @@
             e.preventDefault();
             if(!sb) return;
             sb.classList.toggle('collapsed');
-            // save state
-            try { localStorage.setItem(storageKey, sb.classList.contains('collapsed')); } catch(e) {}
+            var isCollapsed = sb.classList.contains('collapsed');
+            // save state to localStorage
+            try { localStorage.setItem(storageKey, isCollapsed); } catch(e) {}
             // update aria-pressed
-            try { toggle.setAttribute('aria-pressed', sb.classList.contains('collapsed')); } catch(e) {}
+            try { toggle.setAttribute('aria-pressed', isCollapsed); } catch(e) {}
+            // send to server (CSRF)
+            try {
+              var csrftoken = getCookie('csrftoken');
+              fetch('/accounts/prefs/sidebar/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({collapsed: isCollapsed})
+              }).catch(function(){/* ignore network errors */});
+            } catch(err){}
           });
         }
 
