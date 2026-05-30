@@ -108,7 +108,11 @@
                   {% else %}
                     <span class="badge bg-secondary text-capitalize mb-2">{{ b.status }}</span>
                   {% endif %}
-                  <div><a class="btn btn-sm btn-outline-primary" href="{% url 'batch:detail' b.pk %}">View</a></div>
+                  <div class="mb-2"><a class="btn btn-sm btn-outline-primary" href="{% url 'batch:detail' b.pk %}">View</a></div>
+                  <div class="btn-group" role="group" aria-label="batch actions">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'trainers:students' %}?batch_id={{ b.pk }}">Students</a>
+                    <a class="btn btn-sm btn-success" href="{% url 'trainers:attendance' b.pk %}">Attendance</a>
+                  </div>
                 </div>
               </li>
             {% endfor %}

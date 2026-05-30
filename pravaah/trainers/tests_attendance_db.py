@@ -31,6 +31,21 @@ class AttendanceDBTest(TestCase):
         url = reverse('trainers:attendance', args=[1])
         resp = client.post(url, {'present_1': 'on', 'present_2': 'on', 'session_date': '2026-05-30'}, follow=True)
         self.assertEqual(resp.status_code, 200)
-        # check attendance objects
+        # check attendance objects (both present)
         qs = Attendance.objects.filter(session_date=datetime.date(2026,5,30))
         self.assertEqual(qs.count(), 2)
+
+    def test_attendance_records_absent_for_unmarked(self):
+        client = Client()
+        logged_in = client.login(username='t1', password='pass')
+        self.assertTrue(logged_in)
+        url = reverse('trainers:attendance', args=[1])
+        # only mark participant 1 as present
+        resp = client.post(url, {'present_1': 'on', 'session_date': '2026-05-31'}, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        qs = Attendance.objects.filter(session_date=datetime.date(2026,5,31))
+        # two participants -> one present, one absent
+        self.assertEqual(qs.count(), 2)
+        statuses = set(q.status for q in qs)
+        self.assertIn('Present', statuses)
+        self.assertIn('Absent', statuses)

@@ -46,7 +46,7 @@ def students_list(request):
 @trainer_required
 def attendance(request, batch_id=None):
     """Attendance UI. Persists attendance to Attendance model.
-    Creates Attendance records for checked students."
+    Creates Attendance records for checked students and records Absents for unmarked participants."""
     participants = []
     try:
         participants = list(Participant.objects.filter(batch_id=batch_id).values('id', 'name', 'email', 'mobile'))
@@ -67,16 +67,21 @@ def attendance(request, batch_id=None):
         session_date = request.POST.get('session_date')
         if not session_date:
             session_date = timezone.now().date()
-        saved = 0
-        for pid in present_ids:
+        saved_present = 0
+        saved_absent = 0
+        all_ids = [p['id'] for p in participants]
+        for pid in all_ids:
             try:
-                Attendance.objects.create(participant_id=pid, batch_id=batch_id, session_date=session_date, status='Present', marked_by=request.user)
-                saved += 1
+                if pid in present_ids:
+                    Attendance.objects.create(participant_id=pid, batch_id=batch_id, session_date=session_date, status='Present', marked_by=request.user)
+                    saved_present += 1
+                else:
+                    Attendance.objects.create(participant_id=pid, batch_id=batch_id, session_date=session_date, status='Absent', marked_by=request.user)
+                    saved_absent += 1
             except Exception:
-                # swallow per-row errors
                 continue
 
-        messages.success(request, f'Attendance recorded for {saved} students.')
+        messages.success(request, f'Attendance recorded: {saved_present} present, {saved_absent} absent.')
         return redirect('trainers:students')
 
     return render(request, 'trainers/attendance.html', {
